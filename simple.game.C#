@@ -1,0 +1,78 @@
+using System;
+using System.Collections.Generic;
+
+namespace TextAdventureGame
+{
+    public class Room
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Dictionary<string, Room> Exits { get; set; }
+
+        public Room(string name, string description)
+        {
+            Name = name;
+            Description = description;
+            Exits = new Dictionary<string, Room>();
+        }
+
+        public void Describe()
+        {
+            Console.WriteLine($"You are in {Name}. {Description}");
+            Console.WriteLine("Exits: " + string.Join(", ", Exits.Keys));
+        }
+    }
+
+    public class Game
+    {
+        private Room currentRoom;
+
+        public Game()
+        {
+            Room livingRoom = new Room("Living Room", "A cozy room with a fireplace.");
+            Room kitchen = new Room("Kitchen", "A room with a fridge and a stove.");
+            Room bedroom = new Room("Bedroom", "A room with a bed and a wardrobe.");
+
+            livingRoom.Exits.Add("north", kitchen);
+            kitchen.Exits.Add("south", livingRoom);
+            kitchen.Exits.Add("west", bedroom);
+            bedroom.Exits.Add("east", kitchen);
+
+            currentRoom = livingRoom;
+        }
+
+        public void Start()
+        {
+            Console.WriteLine("Welcome to the Text Adventure Game!");
+            while (true)
+            {
+                currentRoom.Describe();
+                Console.Write("Enter a command: ");
+                string command = Console.ReadLine().ToLower();
+
+                if (command == "quit")
+                {
+                    Console.WriteLine("Thanks for playing!");
+                    break;
+                }
+                else if (currentRoom.Exits.ContainsKey(command))
+                {
+                    currentRoom = currentRoom.Exits[command];
+                }
+                else
+                {
+                    Console.WriteLine("Invalid command. Try again.");
+                }
+            }
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Game game = new Game();
+            game.Start();
+        }
+    }
+}
